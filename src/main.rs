@@ -41,7 +41,7 @@ fn run_prompt() -> Result<(), String> {
 }
 
 fn run(source: &str) -> Result<(), String> {
-    let scanner = Scanner::new(source);
+    let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens()?;
     
     println!("{:?}", tokens);

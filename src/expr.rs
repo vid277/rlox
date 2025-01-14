@@ -1,4 +1,4 @@
-use crate::scanner::{Token, TokenType};
+use crate::scanner::Token;
 
 pub enum Expr {
     Binary {

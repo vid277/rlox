@@ -2,6 +2,8 @@ pub mod error;
 pub mod expr;
 pub mod parser;
 pub mod scanner;
+use parser::Parser;
+
 use crate::scanner::*;
 
 use std::fs::read_to_string;
@@ -46,8 +48,10 @@ fn run_prompt() -> Result<(), String> {
 fn run(source: &str) -> Result<(), String> {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens()?;
+    let mut parser = Parser::new(tokens);
+    let expr = parser.expression().unwrap();
 
-    println!("{:?}", tokens);
+    println!("{:?}", expr);
 
     return Ok(());
 }

@@ -245,7 +245,7 @@ impl Scanner {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 pub enum TokenType {
     // Single-char
     LeftParen,

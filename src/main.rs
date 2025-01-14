@@ -1,9 +1,10 @@
-mod scanner;
+pub mod expr;
+pub mod scanner;
 use crate::scanner::*;
 
 use std::fs::read_to_string;
-use std::{env, process};
 use std::io::{self, BufRead, Write};
+use std::{env, process};
 
 fn run_file(path: &str) -> Result<(), String> {
     match read_to_string(path) {
@@ -24,10 +25,10 @@ fn run_prompt() -> Result<(), String> {
 
         match handle.read_line(&mut buffer) {
             Ok(n) => {
-                if n <=1 {
+                if n <= 1 {
                     return Ok(());
                 }
-            },
+            }
             Err(err) => return Err(err.to_string()),
         }
 
@@ -43,7 +44,7 @@ fn run_prompt() -> Result<(), String> {
 fn run(source: &str) -> Result<(), String> {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens()?;
-    
+
     println!("{:?}", tokens);
 
     return Ok(());

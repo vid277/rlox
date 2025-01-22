@@ -39,6 +39,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     (LiteralValue::Number(l), LiteralValue::Number(r)) => {
                         Ok(LiteralValue::Number(l - r))
                     }
+                    
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers.",
                         operator.line_number,
@@ -59,6 +60,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     (LiteralValue::Number(l), LiteralValue::Number(r)) => {
                         Ok(LiteralValue::Number(l * r))
                     }
+
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers.",
                         operator.line_number,
@@ -78,6 +80,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     (LiteralValue::StringValue(l), LiteralValue::Number(r)) => {
                         Ok(LiteralValue::StringValue(format!("{}{}", l, r)))
                     }
+
                     _ => Err(RuntimeError::new(
                         "Operands must be two numbers or two strings.",
                         operator.line_number,
@@ -95,6 +98,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers or strings.",
                         operator.line_number,
@@ -112,6 +116,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers or strings.",
                         operator.line_number,
@@ -129,6 +134,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers or strings.",
                         operator.line_number,
@@ -146,6 +152,7 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers or strings.",
                         operator.line_number,
@@ -202,8 +209,9 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     (LiteralValue::False, LiteralValue::Nil) => Ok(LiteralValue::False),
                     (LiteralValue::Nil, LiteralValue::True) => Ok(LiteralValue::False),
                     (LiteralValue::Nil, LiteralValue::False) => Ok(LiteralValue::False),
-                    
+
                     (LiteralValue::Nil, LiteralValue::Nil) => Ok(LiteralValue::True),
+
                     _ => Err(RuntimeError::new(
                         "Operands must be numbers, strings, or booleans.",
                         operator.line_number,

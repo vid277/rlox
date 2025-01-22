@@ -145,8 +145,9 @@ impl Parser {
                 expression: Box::new(expr),
             });
         }
+
         Err(RuntimeError::new(
-            &format!("Expected expression, but found {}", self.peek().token_type),
+            "Expected expression, but found identifier.",
             self.peek().line_number,
             self.peek().clone(),
         ))
@@ -201,10 +202,11 @@ impl Parser {
         &self.tokens[self.current - 1]
     }
 
+    #[allow(unused)]
     fn synchronize(&mut self) {
         self.advance();
 
-        while (self.is_at_end()) {
+        while !self.is_at_end() {
             if self.previous().token_type == TokenType::Semicolon {
                 return;
             }

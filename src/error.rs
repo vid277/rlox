@@ -17,14 +17,14 @@ impl RuntimeError {
         }
     }
 
-    pub fn report(&self) {
+    pub fn report(&self) -> String {
         if self.token.token_type == TokenType::EOF {
-            println!("LINE {}: {}", self.line, self.message);
+            format!("LINE {}: {}", self.line, self.message)
         } else {
-            println!(
-                "LINE {}: '{}': {}",
+            format!(
+                "LINE {}: ('{}') {}",
                 self.line, self.token.lexeme, self.message
-            );
+            )
         }
     }
 }

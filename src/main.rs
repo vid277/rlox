@@ -21,7 +21,7 @@ fn run_file(path: &str) -> Result<(), String> {
 
 fn run_prompt() -> Result<(), String> {
     loop {
-        print!("> ");
+        print!(">>> ");
 
         io::stdout().flush().expect("Could not flush stdout");
 
@@ -49,13 +49,21 @@ fn run(source: &str) -> Result<(), String> {
     let tokens = scanner.scan_tokens()?;
     let mut parser = Parser::new(tokens);
     let expr = parser.expression().map_err(|e| e.message)?;
-    let result = interpreter::interpret(&expr);
-    println!("{:?}", result);
-    Ok(())
+
+    match interpreter::interpret(&expr) {
+        Ok(result) => {
+            println!("{}", result);
+            Ok(())
+        }
+        Err(error) => Err(error.report()),
+    }
 }
 
 fn main() {
+    println!("Welcome to the rlox interpreter!");
+
     let args: Vec<String> = env::args().collect();
+
     if args.len() > 2 {
         println!("Usage: rlox [script]");
         process::exit(64);

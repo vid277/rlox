@@ -72,6 +72,12 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => {
                         Ok(LiteralValue::StringValue(format!("{}{}", l, r)))
                     }
+                    (LiteralValue::Number(l), LiteralValue::StringValue(r)) => {
+                        Ok(LiteralValue::StringValue(format!("{}{}", l, r)))
+                    }
+                    (LiteralValue::StringValue(l), LiteralValue::Number(r)) => {
+                        Ok(LiteralValue::StringValue(format!("{}{}", l, r)))
+                    }
                     _ => Err(RuntimeError::new(
                         "Operands must be two numbers or two strings.",
                         operator.line_number,
@@ -84,8 +90,13 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+                    (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => Ok(if l > r {
+                        LiteralValue::True
+                    } else {
+                        LiteralValue::False
+                    }),
                     _ => Err(RuntimeError::new(
-                        "Operands must be numbers.",
+                        "Operands must be numbers or strings.",
                         operator.line_number,
                         operator.clone(),
                     )),
@@ -96,8 +107,13 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+                    (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => Ok(if l >= r {
+                        LiteralValue::True
+                    } else {
+                        LiteralValue::False
+                    }),
                     _ => Err(RuntimeError::new(
-                        "Operands must be numbers.",
+                        "Operands must be numbers or strings.",
                         operator.line_number,
                         operator.clone(),
                     )),
@@ -108,8 +124,13 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+                    (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => Ok(if l < r {
+                        LiteralValue::True
+                    } else {
+                        LiteralValue::False
+                    }),
                     _ => Err(RuntimeError::new(
-                        "Operands must be numbers.",
+                        "Operands must be numbers or strings.",
                         operator.line_number,
                         operator.clone(),
                     )),
@@ -120,8 +141,13 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+                    (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => Ok(if l <= r {
+                        LiteralValue::True
+                    } else {
+                        LiteralValue::False
+                    }),
                     _ => Err(RuntimeError::new(
-                        "Operands must be numbers.",
+                        "Operands must be numbers or strings.",
                         operator.line_number,
                         operator.clone(),
                     )),
@@ -132,8 +158,25 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+                    (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => Ok(if l != r {
+                        LiteralValue::True
+                    } else {
+                        LiteralValue::False
+                    }),
+                    (LiteralValue::True, LiteralValue::False) => Ok(LiteralValue::True),
+                    (LiteralValue::False, LiteralValue::True) => Ok(LiteralValue::True),
+                    (LiteralValue::True, LiteralValue::True) => Ok(LiteralValue::False),
+                    (LiteralValue::False, LiteralValue::False) => Ok(LiteralValue::False),
+
+                    (LiteralValue::True, LiteralValue::Nil) => Ok(LiteralValue::True),
+                    (LiteralValue::False, LiteralValue::Nil) => Ok(LiteralValue::True),
+                    (LiteralValue::Nil, LiteralValue::True) => Ok(LiteralValue::True),
+                    (LiteralValue::Nil, LiteralValue::False) => Ok(LiteralValue::True),
+
+                    (LiteralValue::Nil, LiteralValue::Nil) => Ok(LiteralValue::False),
+
                     _ => Err(RuntimeError::new(
-                        "Operands must be numbers.",
+                        "Operands must be numbers, strings, or booleans.",
                         operator.line_number,
                         operator.clone(),
                     )),
@@ -144,8 +187,25 @@ fn evaluate(expr: &Expr) -> Result<LiteralValue, RuntimeError> {
                     } else {
                         LiteralValue::False
                     }),
+                    (LiteralValue::StringValue(l), LiteralValue::StringValue(r)) => Ok(if l == r {
+                        LiteralValue::True
+                    } else {
+                        LiteralValue::False
+                    }),
+
+                    (LiteralValue::True, LiteralValue::True) => Ok(LiteralValue::True),
+                    (LiteralValue::False, LiteralValue::False) => Ok(LiteralValue::True),
+                    (LiteralValue::True, LiteralValue::False) => Ok(LiteralValue::False),
+                    (LiteralValue::False, LiteralValue::True) => Ok(LiteralValue::False),
+
+                    (LiteralValue::True, LiteralValue::Nil) => Ok(LiteralValue::False),
+                    (LiteralValue::False, LiteralValue::Nil) => Ok(LiteralValue::False),
+                    (LiteralValue::Nil, LiteralValue::True) => Ok(LiteralValue::False),
+                    (LiteralValue::Nil, LiteralValue::False) => Ok(LiteralValue::False),
+                    
+                    (LiteralValue::Nil, LiteralValue::Nil) => Ok(LiteralValue::True),
                     _ => Err(RuntimeError::new(
-                        "Operands must be numbers.",
+                        "Operands must be numbers, strings, or booleans.",
                         operator.line_number,
                         operator.clone(),
                     )),

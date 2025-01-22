@@ -1,7 +1,9 @@
 pub mod error;
 pub mod expr;
+pub mod interpreter;
 pub mod parser;
 pub mod scanner;
+
 use parser::Parser;
 
 use crate::scanner::*;
@@ -36,11 +38,8 @@ fn run_prompt() -> Result<(), String> {
             Err(err) => return Err(err.to_string()),
         }
 
-        println!("ECHO: {}", buffer);
-
-        match run(&buffer) {
-            Ok(_) => (),
-            Err(msg) => println!("{}", msg),
+        if let Err(msg) = run(&buffer) {
+            println!("{}", msg);
         }
     }
 }
@@ -49,11 +48,10 @@ fn run(source: &str) -> Result<(), String> {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens()?;
     let mut parser = Parser::new(tokens);
-    let expr = parser.expression().unwrap();
-
-    println!("{:?}", expr);
-
-    return Ok(());
+    let expr = parser.expression().map_err(|e| e.message)?;
+    let result = interpreter::interpret(&expr);
+    println!("{:?}", result);
+    Ok(())
 }
 
 fn main() {

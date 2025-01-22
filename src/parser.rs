@@ -1,4 +1,4 @@
-use crate::error::ParserError;
+use crate::error::RuntimeError;
 use crate::expr::{Expr, LiteralValue as ExprLiteralValue};
 use crate::scanner::{LiteralValue as ScannerLiteralValue, Token, TokenType};
 
@@ -12,11 +12,11 @@ impl Parser {
         Self { tokens, current: 0 }
     }
 
-    pub fn expression(&mut self) -> Result<Expr, ParserError> {
+    pub fn expression(&mut self) -> Result<Expr, RuntimeError> {
         self.equality()
     }
 
-    fn equality(&mut self) -> Result<Expr, ParserError> {
+    fn equality(&mut self) -> Result<Expr, RuntimeError> {
         let mut expr = self.comparison()?;
 
         while self.matches(&[TokenType::BangEqual, TokenType::EqualEqual]) {
@@ -33,7 +33,7 @@ impl Parser {
         Ok(expr)
     }
 
-    fn comparison(&mut self) -> Result<Expr, ParserError> {
+    fn comparison(&mut self) -> Result<Expr, RuntimeError> {
         let mut expr = self.term()?;
 
         while self.matches(&[
@@ -55,7 +55,7 @@ impl Parser {
         Ok(expr)
     }
 
-    fn term(&mut self) -> Result<Expr, ParserError> {
+    fn term(&mut self) -> Result<Expr, RuntimeError> {
         let mut expr = self.factor()?;
 
         while self.matches(&[TokenType::Minus, TokenType::Plus]) {
@@ -72,7 +72,7 @@ impl Parser {
         Ok(expr)
     }
 
-    fn factor(&mut self) -> Result<Expr, ParserError> {
+    fn factor(&mut self) -> Result<Expr, RuntimeError> {
         let mut expr = self.unary()?;
 
         while self.matches(&[TokenType::Slash, TokenType::Star]) {
@@ -89,7 +89,7 @@ impl Parser {
         Ok(expr)
     }
 
-    fn unary(&mut self) -> Result<Expr, ParserError> {
+    fn unary(&mut self) -> Result<Expr, RuntimeError> {
         if self.matches(&[TokenType::Bang, TokenType::Minus]) {
             let operator = self.previous().clone();
             let right = self.unary()?;
@@ -103,7 +103,7 @@ impl Parser {
         self.primary()
     }
 
-    fn primary(&mut self) -> Result<Expr, ParserError> {
+    fn primary(&mut self) -> Result<Expr, RuntimeError> {
         if self.matches(&[TokenType::False]) {
             return Ok(Expr::Literal {
                 value: ExprLiteralValue::False,
@@ -145,19 +145,19 @@ impl Parser {
                 expression: Box::new(expr),
             });
         }
-        Err(ParserError::new(
+        Err(RuntimeError::new(
             &format!("Expected expression, but found {}", self.peek().token_type),
             self.peek().line_number,
             self.peek().clone(),
         ))
     }
 
-    fn consume(&mut self, token_type: TokenType, message: &str) -> Result<&Token, ParserError> {
+    fn consume(&mut self, token_type: TokenType, message: &str) -> Result<&Token, RuntimeError> {
         if self.check(token_type) {
             return Ok(self.advance());
         }
 
-        Err(ParserError::new(
+        Err(RuntimeError::new(
             &format!("{}, but found {}", message, self.peek().token_type),
             self.peek().line_number,
             self.peek().clone(),

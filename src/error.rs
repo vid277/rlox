@@ -2,13 +2,13 @@ use crate::scanner::{Token, TokenType};
 use std::fmt;
 
 #[derive(Debug)]
-pub struct ParserError {
+pub struct RuntimeError {
     pub message: String,
     pub line: usize,
     pub token: Token,
 }
 
-impl ParserError {
+impl RuntimeError {
     pub fn new(message: &str, line: usize, token: Token) -> Self {
         Self {
             message: message.to_string(),
@@ -29,7 +29,7 @@ impl ParserError {
     }
 }
 
-impl fmt::Display for ParserError {
+impl fmt::Display for RuntimeError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         if self.token.token_type == TokenType::EOF {
             write!(f, "LINE {}: {}", self.line, self.message)
